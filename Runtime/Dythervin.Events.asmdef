@@ -1,0 +1,9 @@
+﻿{
+  "name": "Dythervin.Events",
+  "rootNamespace": "Dythervin.Events",
+  "references": [
+    "GUID:8dc57192e6514b7cbf0e53a25c177905",
+    "GUID:0031e864adfd431f8c8176db3609a3cb",
+    "GUID:b11a47de063242e48cced591c7538b96"
+  ]
+}
