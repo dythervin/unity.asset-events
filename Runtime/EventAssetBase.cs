@@ -31,12 +31,12 @@ namespace Dythervin.Events
             return _listeners.Contains(value);
         }
 
-        protected virtual void PreRun()
+        protected virtual void OnBeforeInvoke()
         {
             _listeners.Lock(true);
         }
 
-        protected virtual void AfterRun()
+        protected virtual void OnInvoked()
         {
             _listeners.Lock(false);
         }

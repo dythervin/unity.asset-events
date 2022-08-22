@@ -11,8 +11,8 @@
   },
   "displayName": "asset-events",
   "dependencies": {
-    "com.dythervin.unity.object-pool": "1.0.0",
+    "com.dythervin.unity.object-pool": "1.0.1",
     "com.dythervin.unity.collections": "1.0.1",
-    "com.dythervin.unity.callbacks": "1.0.0"
+    "com.dythervin.unity.callbacks": "1.0.1"
   }
 }

@@ -18,7 +18,7 @@ namespace Dythervin.Events
 #endif
         public void Invoke()
         {
-            PreRun();
+            OnBeforeInvoke();
             OnInvoke?.Invoke();
             onInvoke.Invoke();
             if (EventsLogger.Enabled)
@@ -29,7 +29,7 @@ namespace Dythervin.Events
 
             if (EventsLogger.Enabled)
                 EventsLogger.Log(this, false, Count == 0);
-            AfterRun();
+            OnInvoked();
         }
     }
 
@@ -59,7 +59,7 @@ namespace Dythervin.Events
 #endif
         public void Invoke(T a)
         {
-            PreRun();
+            OnBeforeInvoke();
             OnInvoke?.Invoke(a);
             onInvoke.Invoke(a);
             if (EventsLogger.Enabled)
@@ -77,7 +77,7 @@ namespace Dythervin.Events
 
             if (EventsLogger.Enabled)
                 EventsLogger.Log(this, a, false, Count == 0);
-            AfterRun();
+            OnInvoked();
         }
 
         public bool Remove(IListener<T> value)
@@ -85,15 +85,15 @@ namespace Dythervin.Events
             return listenersGeneric.Remove(value);
         }
 
-        protected override void AfterRun()
+        protected override void OnInvoked()
         {
-            base.AfterRun();
+            base.OnInvoked();
             listenersGeneric.Lock(false);
         }
 
-        protected override void PreRun()
+        protected override void OnBeforeInvoke()
         {
-            base.PreRun();
+            base.OnBeforeInvoke();
             listenersGeneric.Lock(true);
         }
     }
