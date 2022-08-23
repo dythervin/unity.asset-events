@@ -29,25 +29,25 @@ namespace Dythervin.Events
                 Debug.Log($"{Listener(listener)}({typeof(T).Name})", listener);
         }
 
-        public static void Log(EventAsset eventAsset, bool start, bool empty)
+        public static void Log(EventAsset eventAsset, bool start, int count)
         {
             if (!Enabled)
                 return;
 
             if (start)
-                Debug.Log($"{Event(eventAsset)}(){Empty(empty)}", eventAsset);
+                Debug.Log($"{Event(eventAsset)}(){Count(count)}", eventAsset);
             prefix = start
                 ? $"{prefix}{Space}"
                 : prefix.Remove(prefix.Length - Space.Length);
         }
 
-        public static void Log<T>(EventAsset<T> eventAsset, in T a, bool start, bool empty)
+        public static void Log<T>(EventAsset<T> eventAsset, in T a, bool start, int count)
         {
             if (!Enabled)
                 return;
 
             if (start)
-                Debug.Log($"{Event(eventAsset)}({typeof(T).Name} {(a is Object obj ? obj.name : a.ToString())}){Empty(empty)}", eventAsset);
+                Debug.Log($"{Event(eventAsset)}({typeof(T).Name} {(a is Object obj ? obj.name : a.ToString())}){Count(count)}", eventAsset);
             prefix = start
                 ? $"{prefix}{Space}"
                 : prefix.Remove(prefix.Length - Space.Length);
@@ -63,9 +63,9 @@ namespace Dythervin.Events
             return $"{prefix}Listener <color={ListenerColor}>{listener.name}</color> Raised";
         }
 
-        private static string Empty(bool value)
+        private static string Count(int value)
         {
-            return value ? $" <color={EmptyColor}>Empty</color>" : string.Empty;
+            return $" (<color={EmptyColor}>{value.ToString()}</color>)";
         }
     }
 }

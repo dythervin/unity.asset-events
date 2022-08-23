@@ -36,13 +36,13 @@ namespace Dythervin.Events
             onRaise.Invoke();
         }
 
-        protected override void Enabled()
+        protected override void Subscribed()
         {
             foreach (EventAssetBase eventAsset in events)
                 eventAsset.Add(this);
         }
 
-        protected override void Disabled()
+        protected override void Unsubscribed()
         {
             foreach (EventAssetBase eventAsset in events)
                 eventAsset.Remove(this);
@@ -72,13 +72,13 @@ namespace Dythervin.Events
             onRaise.Invoke(a);
         }
 
-        protected override void Enabled()
+        protected override void Subscribed()
         {
             foreach (var eventAsset in events)
                 eventAsset.Add(this);
         }
 
-        protected override void Disabled()
+        protected override void Unsubscribed()
         {
             foreach (var eventAsset in events)
                 eventAsset.Remove(this);

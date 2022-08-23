@@ -1,97 +1,75 @@
-﻿using Dythervin.Callbacks;
+﻿using UnityEngine;
 #if ODIN_INSPECTOR
 using Sirenix.OdinInspector;
 #endif
-using UnityEngine;
 
 namespace Dythervin.Events
 {
     [DefaultExecutionOrder(-1000)]
-    public abstract partial class EventListenerBase : MonoBehaviour, IPrioritized, ISerializationCallbackReceiver, IPlayModeListener
+    public abstract partial class EventListenerBase : MonoBehaviour, IPrioritized
     {
-        private enum Type : sbyte
-        {
-            [InspectorName("Create-Destroy")]
-            Created = -1,
+        [EventAdvanced, SerializeField] private Priority priority;
+        [EventAdvanced, SerializeField] private Type type;
 
-            [InspectorName("Enable-Disable")]
-            Enable = 0,
-
-            [InspectorName("Awake-Destroy")]
-            Awake
-        }
-
-        [EventAdvanced] [SerializeField] private Priority priority;
-        [EventAdvanced] [SerializeField] private Type type;
-        
 #if ODIN_INSPECTOR
-        [ShowInInspector] [ReadOnly]
- #endif
+        [ShowInInspector, ReadOnly]
+#endif
         private bool _subscribed;
-
-        public Priority Priority => priority;
-
 
         protected virtual void Awake()
         {
             if (type == Type.Awake)
-                Enable();
-        }
-
-        protected virtual void OnDestroy()
-        {
-            if (type == Type.Awake || type == Type.Created)
-                Disable();
-        }
-
-        protected virtual void OnDisable()
-        {
-            if (type == Type.Enable)
-                Disable();
+                Subscribe();
         }
 
         protected virtual void OnEnable()
         {
             if (type == Type.Enable)
-                Enable();
+                Subscribe();
         }
 
-        protected abstract void Disabled();
+        protected virtual void OnDisable()
+        {
+            if (type == Type.Enable)
+                Unsubscribe();
+        }
 
-        protected abstract void Enabled();
+        protected virtual void OnDestroy()
+        {
+            if (type == Type.Awake) // type == Type.Created
+                Unsubscribe();
+        }
 
-        private void Disable()
+        public Priority Priority => priority;
+
+        protected abstract void Unsubscribed();
+
+        protected abstract void Subscribed();
+
+        private void Unsubscribe()
         {
             if (!_subscribed)
                 return;
 
-            Disabled();
+            Unsubscribed();
             _subscribed = false;
         }
 
 
-        private void Enable()
+        private void Subscribe()
         {
             if (_subscribed)
                 return;
 
-            Enabled();
+            Subscribed();
             _subscribed = true;
         }
 
-        void ISerializationCallbackReceiver.OnBeforeSerialize() { }
-
-        void ISerializationCallbackReceiver.OnAfterDeserialize()
+        private enum Type : sbyte
         {
-            if (type == Type.Created)
-                this.TryEnterPlayMode();
-        }
-
-        bool IPlayModeListener.MainThreadOnly => true;
-
-        void IPlayModeListener.OnEnterPlayMode()
-        {
-            Enable();
+            // [InspectorName("Create-Destroy(Only)")] Created = -1,
+            [InspectorName("Enable-Disable")] Enable = 0,
+            [InspectorName("Awake-Destroy")] Awake
         }
     }
 }

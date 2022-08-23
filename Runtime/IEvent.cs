@@ -1,11 +1,13 @@
-﻿using UnityEngine.Events;
+﻿using JetBrains.Annotations;
+using UnityEngine.Events;
 
 namespace Dythervin.Events
 {
     public interface IEventContainer<in T>
     {
-        void Add(T value);
-        bool Remove(T value);
+        void Add([NotNull] T value);
+        bool Remove([NotNull] T value);
+        bool Contains([NotNull] T value);
     }
 
     public interface IEvent<T> : IEventContainer<IListener<T>>, IEventContainer<IListener>

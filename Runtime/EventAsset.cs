@@ -1,8 +1,10 @@
+using Dythervin.Core.Utils;
+using UnityEngine;
+using UnityEngine.Assertions;
+using UnityEngine.Events;
 #if ODIN_INSPECTOR
 using Sirenix.OdinInspector;
 #endif
-using UnityEngine;
-using UnityEngine.Events;
 
 namespace Dythervin.Events
 {
@@ -14,7 +16,7 @@ namespace Dythervin.Events
         public event UnityAction OnInvoke;
 
 #if ODIN_INSPECTOR
-        [HideInEditorMode] [Button]
+        [HideInEditorMode, Button]
 #endif
         public void Invoke()
         {
@@ -22,13 +24,15 @@ namespace Dythervin.Events
             OnInvoke?.Invoke();
             onInvoke.Invoke();
             if (EventsLogger.Enabled)
-                EventsLogger.Log(this, true, Count == 0);
+                EventsLogger.Log(this, true, Count);
 
             foreach (Priority priority in this)
+            {
                 RunSimple(priority);
+            }
 
             if (EventsLogger.Enabled)
-                EventsLogger.Log(this, false, Count == 0);
+                EventsLogger.Log(this, false, Count);
             OnInvoked();
         }
     }
@@ -38,24 +42,28 @@ namespace Dythervin.Events
         [SerializeField] private UnityEvent<T> onInvoke;
 
 #if ODIN_INSPECTOR
-        [ShowInInspector] [ReadOnly]
+        [ShowInInspector, ReadOnly] 
 #endif
         protected readonly LockableListenerContainer<IListener<T>> listenersGeneric = new LockableListenerContainer<IListener<T>>();
+
+        public override int Count => base.Count + listenersGeneric.values.TotalCount;
 
         public event UnityAction<T> OnInvoke;
 
         public void Add(IListener<T> value)
         {
+            Assertions.IsNotNull(value);
             listenersGeneric.Add(value);
         }
 
         public bool Contains(IListener<T> value)
         {
+            Assertions.IsNotNull(value);
             return listenersGeneric.Contains(value);
         }
 
 #if ODIN_INSPECTOR
-        [HideInEditorMode] [Button]
+        [HideInEditorMode, Button]
 #endif
         public void Invoke(T a)
         {
@@ -63,7 +71,7 @@ namespace Dythervin.Events
             OnInvoke?.Invoke(a);
             onInvoke.Invoke(a);
             if (EventsLogger.Enabled)
-                EventsLogger.Log(this, a, true, Count == 0);
+                EventsLogger.Log(this, a, true, Count);
             foreach (Priority priority in this)
             {
                 RunSimple(priority);
@@ -71,17 +79,20 @@ namespace Dythervin.Events
                     continue;
 
                 foreach (var listener in list)
+                {
                     if (!listenersGeneric.ToRemove(listener))
                         listener.Execute(a);
+                }
             }
 
             if (EventsLogger.Enabled)
-                EventsLogger.Log(this, a, false, Count == 0);
+                EventsLogger.Log(this, a, false, Count);
             OnInvoked();
         }
 
         public bool Remove(IListener<T> value)
         {
+            Assertions.IsNotNull(value);
             return listenersGeneric.Remove(value);
         }
 
@@ -94,7 +105,7 @@ namespace Dythervin.Events
         protected override void OnBeforeInvoke()
         {
             base.OnBeforeInvoke();
-            listenersGeneric.Lock(true);
+            listenersGeneric.Lock();
         }
     }
 }

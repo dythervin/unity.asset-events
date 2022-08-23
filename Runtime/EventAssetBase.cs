@@ -1,12 +1,14 @@
 ﻿using System.Collections.Generic;
+using Dythervin.Core.Utils;
 #if ODIN_INSPECTOR
 using Sirenix.OdinInspector;
 #endif
 using UnityEngine;
+using UnityEngine.Assertions;
 
 namespace Dythervin.Events
 {
-    public abstract class EventAssetBase : ScriptableObject
+    public abstract class EventAssetBase : ScriptableObject, IEventContainer<IListener>
     {
         public const string MenuName = "Events/";
         private static readonly List<Priority> PriorityList = new List<Priority>() { Priority.High, Priority.Default, Priority.Low };
@@ -18,16 +20,19 @@ namespace Dythervin.Events
 
         public void Add(IListener value)
         {
+            Assertions.IsNotNull(value);
             _listeners.Add(value);
         }
 
         public bool Remove(IListener value)
         {
+            Assertions.IsNotNull(value);
             return _listeners.Remove(value);
         }
 
         public bool Contains(IListener value)
         {
+            Assertions.IsNotNull(value);
             return _listeners.Contains(value);
         }
 
@@ -51,7 +56,7 @@ namespace Dythervin.Events
                     listener.Execute();
         }
 
-        public int Count => _listeners.Count;
+        public virtual int Count => _listeners.values.TotalCount;
         public List<Priority>.Enumerator GetEnumerator() => PriorityList.GetEnumerator();
     }
 }

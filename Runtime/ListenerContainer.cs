@@ -8,6 +8,20 @@ namespace Dythervin.Events
     {
         private static readonly ObjectPoolAuto<HashSet<T>> Pool = new ObjectPoolAuto<HashSet<T>>();
 
+        public int TotalCount
+        {
+            get
+            {
+                int count = 0;
+                foreach (var value in Values)
+                {
+                    count += value.Count;
+                }
+
+                return count;
+            }
+        }
+
 
         public bool Contains(T value)
         {
@@ -16,7 +30,15 @@ namespace Dythervin.Events
 
         void ICollection<T>.CopyTo(T[] array, int arrayIndex)
         {
-            throw new System.NotImplementedException();
+            foreach (var pair in this)
+            {
+                foreach (T value in pair.Value)
+                {
+                    array[arrayIndex++] = value;
+                    if (arrayIndex >= array.Length)
+                        return;
+                }
+            }
         }
 
         bool ICollection<T>.IsReadOnly => ((ICollection<KeyValuePair<Priority, HashSet<T>>>)this).IsReadOnly;
@@ -60,7 +82,13 @@ namespace Dythervin.Events
 
         IEnumerator<T> IEnumerable<T>.GetEnumerator()
         {
-            throw new System.NotImplementedException();
+            foreach (var pair in this)
+            {
+                foreach (T value in pair.Value)
+                {
+                    yield return value;
+                }
+            }
         }
     }
 }
