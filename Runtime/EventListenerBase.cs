@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using Dythervin.Core.Extensions;
+using UnityEngine;
 #if ODIN_INSPECTOR
 using Sirenix.OdinInspector;
 #endif
@@ -8,11 +9,12 @@ namespace Dythervin.Events
     [DefaultExecutionOrder(-1000)]
     public abstract partial class EventListenerBase : MonoBehaviour, IPrioritized
     {
-        [EventAdvanced, SerializeField] private Priority priority;
-        [EventAdvanced, SerializeField] private Type type;
+        [EventAdvanced] [SerializeField] private Priority priority;
+        [EventAdvanced] [SerializeField] private Type type;
 
 #if ODIN_INSPECTOR
-        [ShowInInspector, ReadOnly]
+        [ShowInInspector]
+        [ReadOnly]
 #endif
         private bool _subscribed;
 
@@ -71,5 +73,36 @@ namespace Dythervin.Events
             [InspectorName("Enable-Disable")] Enable = 0,
             [InspectorName("Awake-Destroy")] Awake
         }
+    }
+
+    public abstract class EventListenerBase<TEvent, TUnityEvent> : EventListenerBase
+        where TEvent : Object
+    {
+#if ODIN_INSPECTOR
+        [PropertyOrder(-1)]
+#endif
+        [SerializeField]
+        protected TEvent[] events;
+
+#if ODIN_INSPECTOR
+        [PropertyOrder(int.MaxValue)]
+#endif
+        [Space]
+        [SerializeField]
+        protected TUnityEvent onRaise;
+
+
+
+#if ODIN_INSPECTOR
+        [Button]
+        private void SetName()
+        {
+            if(events == null || events.Length == 0 || events[0] == null)
+                return;
+                
+            name = events[0].name;
+            this.Dirty();
+        }
+#endif
     }
 }
