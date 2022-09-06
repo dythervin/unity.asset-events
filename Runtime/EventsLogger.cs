@@ -7,8 +7,8 @@ namespace Dythervin.Events
     [SuppressMessage("ReSharper", "Unity.PerformanceCriticalCodeInvocation")]
     public static class EventsLogger
     {
-        private static string prefix = string.Empty;
-        private static readonly string Space = "   ";
+        private static string _prefix = string.Empty;
+        private const string Space = "   ";
 
         private const string EventColor = "cyan";
         private const string ListenerColor = "green";
@@ -36,9 +36,9 @@ namespace Dythervin.Events
 
             if (start)
                 Debug.Log($"{Event(eventAsset)}(){Count(count)}", eventAsset);
-            prefix = start
-                ? $"{prefix}{Space}"
-                : prefix.Remove(prefix.Length - Space.Length);
+            _prefix = start
+                ? $"{_prefix}{Space}"
+                : _prefix.Remove(_prefix.Length - Space.Length);
         }
 
         public static void Log<T>(EventAsset<T> eventAsset, in T a, bool start, int count)
@@ -48,19 +48,19 @@ namespace Dythervin.Events
 
             if (start)
                 Debug.Log($"{Event(eventAsset)}({typeof(T).Name} {(a is Object obj ? obj.name : a.ToString())}){Count(count)}", eventAsset);
-            prefix = start
-                ? $"{prefix}{Space}"
-                : prefix.Remove(prefix.Length - Space.Length);
+            _prefix = start
+                ? $"{_prefix}{Space}"
+                : _prefix.Remove(_prefix.Length - Space.Length);
         }
 
         private static string Event(Object assetEvent)
         {
-            return $"{prefix}Event <color={EventColor}>{assetEvent.name}</color> Invoked";
+            return $"{_prefix}Event <color={EventColor}>{assetEvent.name}</color> Invoked";
         }
 
         private static string Listener(Object listener)
         {
-            return $"{prefix}Listener <color={ListenerColor}>{listener.name}</color> Raised";
+            return $"{_prefix}Listener <color={ListenerColor}>{listener.name}</color> Raised";
         }
 
         private static string Count(int value)
