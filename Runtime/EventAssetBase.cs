@@ -52,7 +52,7 @@ namespace Dythervin.Events
                 return;
 
             foreach (IListener listener in list)
-                if (!_listeners.ToRemove(listener))
+                if (!_listeners.IsToRemove(listener))
                     listener.Execute();
         }
 

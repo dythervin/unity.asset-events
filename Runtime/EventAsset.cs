@@ -80,7 +80,7 @@ namespace Dythervin.Events
 
                 foreach (var listener in list)
                 {
-                    if (!listenersGeneric.ToRemove(listener))
+                    if (!listenersGeneric.IsToRemove(listener))
                         listener.Execute(a);
                 }
             }
