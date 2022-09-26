@@ -70,7 +70,7 @@ namespace Dythervin.Events
                     if (set.Count == 0)
                     {
                         Remove(priority);
-                        Pool.Release(set, false);
+                        Pool.Release(ref set, false);
                     }
 
                     return true;
